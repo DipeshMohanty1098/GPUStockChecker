@@ -8,7 +8,7 @@ import smtplib
 
 #driver
 driver_path = 'C:/Users/eradi/OneDrive/Desktop/chromedriver'
-driver = webdriver.Chrome(executable_path=driver_path)
+
 url = 'https://rptechindia.in/nvidia-geforce-rtx-3060-ti.html'
 
 #tkinter
@@ -35,9 +35,10 @@ def script():
     if (url_input.get() == '' or password.get() == '' or email.get() == ''):
         messagebox.showerror("Error", "Please fill up all fields!")
     else:
+        driver = webdriver.Chrome(executable_path=driver_path)
+        driver.get(url_input.get())
         while(is_present == False):
             try:
-                driver.get(url_input.get())
                 add_to_cart = driver.find_element_by_id('product-addtocart-button')
                 print('In Stock!')
                 server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -51,12 +52,15 @@ def script():
                 message['To'] = email_input
                 server.send_message(message)
                 server.quit()
+                root.update()
                 break
             except NoSuchElementException:
+                root.update()
                 is_present = False
                 print('Out of Stock!')
                 driver.refresh()
                 time.sleep(5)
+                root.update()
                 continue
 
 
